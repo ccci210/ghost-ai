@@ -9,10 +9,11 @@ change.
 
 ## Current Goal
 
-- Install and configure shadcn/ui, add the specified UI components and Lucide React, and create the shared `cn()` helper.
+- Build the editor chrome from `context/feature-specs/02-editor.md`: navbar, floating project sidebar, and reusable dialog pattern.
 
 ## Completed
 
+- Composed the editor navbar and floating project sidebar in `components/editor/editor-layout.tsx`, then mounted that shell around route content from the root layout.
 - Initialized shadcn/ui for Next.js and Tailwind CSS v4 with `components.json`.
 - Added Button, Card, Dialog, Input, Tabs, Textarea, and ScrollArea under `components/ui/`.
 - Installed Lucide React and the class-merging `cn` utility.
@@ -30,7 +31,7 @@ change.
 
 ## Open Questions
 
-- None for this feature unit. A success color token was not introduced because no success-state component or behavior is in scope.
+- The spec repeats the navbar path for the Project Sidebar. Implemented it as `components/editor/project-sidebar.tsx` to keep the components separate.
 
 ## Architecture Decisions
 
@@ -41,3 +42,6 @@ change.
 
 - Generated files in `components/ui/` were not edited after installation.
 - The Turbopack build could not spawn its CSS worker in this environment. `npm run build -- --webpack` completed successfully.
+- Implemented `EditorNavbar`, `ProjectSidebar`, and `EditorDialogPattern` in `components/editor/`.
+- `npm run lint` and `npx tsc --noEmit` both completed successfully for the editor feature.
+- The root layout now displays the navbar and sidebar; lint and TypeScript checks pass after integration.
