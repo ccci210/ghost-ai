@@ -1,12 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: var(--font-geist-sans);
-    --font-sans: var(--font-geist-sans);
+    --color-auth-accent: var(--auth-accent);
+    --color-auth-accent-soft: var(--auth-accent-soft);
+    --color-auth-panel: var(--auth-panel);
+    --font-heading: var(--font-inter);
+    --font-sans: var(--font-inter);
     --font-mono: var(--font-geist-mono);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
@@ -81,6 +83,9 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
+    --auth-accent: oklch(0.76 0.15 195);
+    --auth-accent-soft: oklch(0.24 0.055 195);
+    --auth-panel: oklch(0.18 0.015 245);
 }
 
 .dark {
@@ -115,6 +120,9 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
+    --auth-accent: oklch(0.76 0.15 195);
+    --auth-accent-soft: oklch(0.24 0.055 195);
+    --auth-panel: oklch(0.18 0.015 245);
 }
 
 @layer base {
