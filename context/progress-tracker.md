@@ -9,10 +9,15 @@ change.
 
 ## Current Goal
 
-- Implement the `/editor` home and project dialogs from `context/feature-specs/04-project-dialog.md` using mock data only.
+- Implement Prisma project and collaborator models, a cached Prisma Client, and the initial database migration from `context/feature-specs/05-prisma.md`.
 
 ## Completed
 
+- Added the Prisma `Project` and `ProjectCollaborator` models with Clerk owner IDs, draft/archive status, timestamps, cascade deletion, uniqueness, and query indexes.
+- Added the cached Prisma singleton with Prisma Accelerate URL handling and direct PostgreSQL adapter support.
+- Updated Prisma configuration to load `.env.local` and discover the multi-file schema.
+- Created and applied the initial Prisma migration and generated the Prisma Client.
+- Verified with a successful production build.
 - Added the minimal editor home heading, description, and New project action without a card wrapper.
 - Added `useProjectDialogs` to manage dialog selection, project-name form state, mock loading, and in-memory mock owned/shared projects.
 - Wired create actions from the editor home and sidebar, plus owned-project rename/delete actions; shared projects have no actions.
@@ -57,6 +62,7 @@ change.
 
 ## Session Notes
 
+- Prisma 7.10 CLI and client require Node 20.19+, 22.12+, or 24+; the workspace's Node 21.7.2 runtime was unsupported, so Prisma commands and the production build ran under a temporary Node 22 runtime.
 - Generated files in `components/ui/` were not edited after installation.
 - The Turbopack build could not spawn its CSS worker in this environment. `npm run build -- --webpack` completed successfully.
 - Implemented `EditorNavbar`, `ProjectSidebar`, and `EditorDialogPattern` in `components/editor/`.
