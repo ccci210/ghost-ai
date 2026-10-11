@@ -9,10 +9,20 @@ change.
 
 ## Current Goal
 
-- Implement Prisma project and collaborator models, a cached Prisma Client, and the initial database migration from `context/feature-specs/05-prisma.md`.
+- Wire the editor sidebar and project dialogs to the project APIs as specified in `context/feature-specs/07-wire-editor-home.md`.
 
 ## Completed
 
+- Added server-side project data loading for owned and email-shared projects and passed both lists into the editor sidebar without client-side initial fetching.
+- Replaced mock dialog state with `useProjectActions` API mutations for create, rename, and delete, including rename refresh and active-workspace delete redirect behavior.
+- Generated slug-based room IDs with short random suffixes and used the same ID for the project record and workspace route.
+- Connected sidebar project selection to the workspace route and added a minimal access-checked workspace page.
+- Verified with a successful production build, including the editor and project workspace routes.
+- Added `GET` and `POST /api/projects` for listing the authenticated user's projects and creating projects with the `Untitled Project` default.
+- Added `PATCH` and `DELETE /api/projects/[projectId]` with owner checks, `401` responses for signed-out requests, and `403` responses for non-owner mutations.
+- Kept Clerk's proxy from redirecting API requests so route handlers can return JSON authentication errors.
+- Added request-body parsing and project-name validation for create and rename requests.
+- Verified with a successful production build, which includes both API routes.
 - Added the Prisma `Project` and `ProjectCollaborator` models with Clerk owner IDs, draft/archive status, timestamps, cascade deletion, uniqueness, and query indexes.
 - Added the cached Prisma singleton with Prisma Accelerate URL handling and direct PostgreSQL adapter support.
 - Updated Prisma configuration to load `.env.local` and discover the multi-file schema.
@@ -57,6 +67,7 @@ change.
 
 ## Architecture Decisions
 
+- Use the slug plus random suffix as the project ID and future Liveblocks room ID for editor-created projects; keep Prisma's existing CUID default for API clients that omit an ID.
 - Use the shadcn/ui Base UI preset with Tailwind CSS v4; this is the generated configuration for the installed component set.
 - Apply a dark-only neutral palette by default because the feature requires no light styling and no existing palette values were present in `globals.css`.
 

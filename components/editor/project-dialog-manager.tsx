@@ -3,9 +3,9 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { EditorDialogPattern } from "@/components/editor/editor-dialog-pattern"
-import type { useProjectDialogs } from "@/hooks/use-project-dialogs"
+import type { useProjectActions } from "@/hooks/use-project-actions"
 
-type ProjectDialogController = ReturnType<typeof useProjectDialogs>
+type ProjectDialogController = ReturnType<typeof useProjectActions>
 
 type ProjectDialogManagerProps = {
   controller: ProjectDialogController
@@ -17,9 +17,11 @@ export function ProjectDialogManager({ controller }: ProjectDialogManagerProps) 
     closeDialog,
     createProject,
     deleteProject,
+    error,
     isLoading,
     projectName,
     renameProject,
+    roomIdPreview,
     selectedProject,
     setProjectName,
     slugPreview,
@@ -87,14 +89,16 @@ export function ProjectDialogManager({ controller }: ProjectDialogManagerProps) 
           </div>
           {isCreate ? (
             <div className="space-y-1" aria-live="polite">
-              <p className="text-xs font-medium text-muted-foreground">Project slug</p>
+              <p className="text-xs font-medium text-muted-foreground">Workspace room ID</p>
               <p className="rounded-md border border-border bg-muted/50 px-3 py-2 font-mono text-sm">
-                {slugPreview || "project-name"}
+                {roomIdPreview}
               </p>
             </div>
           ) : null}
+          {error ? <p className="text-sm text-destructive" role="alert">{error}</p> : null}
         </form>
       )}
+      {isDelete && error ? <p className="text-sm text-destructive" role="alert">{error}</p> : null}
     </EditorDialogPattern>
   )
 }

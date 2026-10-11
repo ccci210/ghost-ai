@@ -10,10 +10,12 @@ function matchesRoute(pathname: string, route: string) {
 
 export default clerkMiddleware(async (auth, request) => {
   const pathname = request.nextUrl.pathname;
+  const isApiRoute = pathname === "/api" || pathname.startsWith("/api/");
   const isPublicAuthPage =
     matchesRoute(pathname, signInPath) || matchesRoute(pathname, signUpPath);
 
-  if (!isPublicAuthPage) {
+  // API handlers return JSON 401 responses themselves instead of Clerk redirects.
+  if (!isApiRoute && !isPublicAuthPage) {
     await auth.protect();
   }
 });

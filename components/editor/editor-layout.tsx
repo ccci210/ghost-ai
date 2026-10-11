@@ -1,20 +1,25 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 import { EditorNavbar } from "@/components/editor/editor-navbar"
 import { ProjectDialogContext } from "@/components/editor/project-dialog-context"
 import { ProjectDialogManager } from "@/components/editor/project-dialog-manager"
 import { ProjectSidebar } from "@/components/editor/project-sidebar"
-import { useProjectDialogs } from "@/hooks/use-project-dialogs"
+import { useProjectActions } from "@/hooks/use-project-actions"
+import type { ProjectItem } from "@/lib/project-data"
 
 type EditorLayoutProps = {
   children: React.ReactNode
+  ownedProjects: ProjectItem[]
+  sharedProjects: ProjectItem[]
 }
 
-export function EditorLayout({ children }: EditorLayoutProps) {
+export function EditorLayout({ children, ownedProjects, sharedProjects }: EditorLayoutProps) {
+  const router = useRouter()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const projectDialogs = useProjectDialogs()
+  const projectActions = useProjectActions(ownedProjects, sharedProjects)
 
   return (
     <>
@@ -25,16 +30,20 @@ export function EditorLayout({ children }: EditorLayoutProps) {
       <ProjectSidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
-        onDeleteProject={projectDialogs.openDeleteDialog}
-        onNewProject={projectDialogs.openCreateDialog}
-        onRenameProject={projectDialogs.openRenameDialog}
-        projects={projectDialogs.projects}
-        sharedProjects={projectDialogs.sharedProjects}
+        onDeleteProject={projectActions.openDeleteDialog}
+        onNewProject={projectActions.openCreateDialog}
+        onOpenProject={(project) => {
+          setIsSidebarOpen(false)
+          router.push(`/editor/${encodeURIComponent(project.id)}`)
+        }}
+        onRenameProject={projectActions.openRenameDialog}
+        projects={projectActions.ownedProjects}
+        sharedProjects={projectActions.sharedProjects}
       />
-      <ProjectDialogContext.Provider value={{ openCreateDialog: projectDialogs.openCreateDialog }}>
+      <ProjectDialogContext.Provider value={{ openCreateDialog: projectActions.openCreateDialog }}>
         <main className="min-h-screen flex-1 pt-14">{children}</main>
       </ProjectDialogContext.Provider>
-      <ProjectDialogManager controller={projectDialogs} />
+      <ProjectDialogManager controller={projectActions} />
     </>
   )
 }

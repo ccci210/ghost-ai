@@ -4,7 +4,7 @@ import { Pencil, Plus, Trash2, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { ProjectItem } from "@/hooks/use-project-dialogs"
+import type { ProjectItem } from "@/lib/project-data"
 
 type ProjectSidebarProps = {
   isOpen: boolean
@@ -12,6 +12,7 @@ type ProjectSidebarProps = {
   projects: ProjectItem[]
   sharedProjects: ProjectItem[]
   onNewProject: () => void
+  onOpenProject: (project: ProjectItem) => void
   onRenameProject: (project: ProjectItem) => void
   onDeleteProject: (project: ProjectItem) => void
 }
@@ -19,11 +20,13 @@ type ProjectSidebarProps = {
 function ProjectList({
   projects,
   emptyMessage,
+  onOpenProject,
   onRenameProject,
   onDeleteProject,
 }: {
   projects: ProjectItem[]
   emptyMessage: string
+  onOpenProject: (project: ProjectItem) => void
   onRenameProject?: (project: ProjectItem) => void
   onDeleteProject?: (project: ProjectItem) => void
 }) {
@@ -35,10 +38,14 @@ function ProjectList({
     <ul className="space-y-1">
       {projects.map((project) => (
         <li className="group flex items-center gap-2 rounded-md px-2 py-2 hover:bg-sidebar-accent" key={project.id}>
-          <div className="min-w-0 flex-1">
+          <button
+            className="min-w-0 flex-1 text-left"
+            onClick={() => onOpenProject(project)}
+            type="button"
+          >
             <p className="truncate text-sm font-medium">{project.name}</p>
             <p className="truncate text-xs text-muted-foreground">/{project.slug}</p>
-          </div>
+          </button>
           {project.isOwned && onRenameProject && onDeleteProject ? (
             <div className="flex shrink-0 items-center gap-0.5 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
               <Button
@@ -73,6 +80,7 @@ export function ProjectSidebar({
   projects,
   sharedProjects,
   onNewProject,
+  onOpenProject,
   onRenameProject,
   onDeleteProject,
 }: ProjectSidebarProps) {
@@ -106,13 +114,18 @@ export function ProjectSidebar({
           <TabsContent className="min-h-0 overflow-y-auto" value="my-projects">
             <ProjectList
               emptyMessage="Your projects will appear here."
+              onOpenProject={onOpenProject}
               onDeleteProject={onDeleteProject}
               onRenameProject={onRenameProject}
               projects={projects}
             />
           </TabsContent>
           <TabsContent className="min-h-0 overflow-y-auto" value="shared">
-            <ProjectList emptyMessage="Projects shared with you will appear here." projects={sharedProjects} />
+            <ProjectList
+              emptyMessage="Projects shared with you will appear here."
+              onOpenProject={onOpenProject}
+              projects={sharedProjects}
+            />
           </TabsContent>
         </Tabs>
 
