@@ -1,17 +1,81 @@
 "use client"
 
-import { Plus, X } from "lucide-react"
+import { Pencil, Plus, Trash2, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import type { ProjectItem } from "@/hooks/use-project-dialogs"
 
 type ProjectSidebarProps = {
   isOpen: boolean
   onClose: () => void
-  onNewProject?: () => void
+  projects: ProjectItem[]
+  sharedProjects: ProjectItem[]
+  onNewProject: () => void
+  onRenameProject: (project: ProjectItem) => void
+  onDeleteProject: (project: ProjectItem) => void
 }
 
-export function ProjectSidebar({ isOpen, onClose, onNewProject }: ProjectSidebarProps) {
+function ProjectList({
+  projects,
+  emptyMessage,
+  onRenameProject,
+  onDeleteProject,
+}: {
+  projects: ProjectItem[]
+  emptyMessage: string
+  onRenameProject?: (project: ProjectItem) => void
+  onDeleteProject?: (project: ProjectItem) => void
+}) {
+  if (projects.length === 0) {
+    return <p className="px-2 py-8 text-center text-sm text-muted-foreground">{emptyMessage}</p>
+  }
+
+  return (
+    <ul className="space-y-1">
+      {projects.map((project) => (
+        <li className="group flex items-center gap-2 rounded-md px-2 py-2 hover:bg-sidebar-accent" key={project.id}>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium">{project.name}</p>
+            <p className="truncate text-xs text-muted-foreground">/{project.slug}</p>
+          </div>
+          {project.isOwned && onRenameProject && onDeleteProject ? (
+            <div className="flex shrink-0 items-center gap-0.5 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+              <Button
+                aria-label={`Rename ${project.name}`}
+                onClick={() => onRenameProject(project)}
+                size="icon-sm"
+                title={`Rename ${project.name}`}
+                variant="ghost"
+              >
+                <Pencil />
+              </Button>
+              <Button
+                aria-label={`Delete ${project.name}`}
+                onClick={() => onDeleteProject(project)}
+                size="icon-sm"
+                title={`Delete ${project.name}`}
+                variant="ghost"
+              >
+                <Trash2 />
+              </Button>
+            </div>
+          ) : null}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+export function ProjectSidebar({
+  isOpen,
+  onClose,
+  projects,
+  sharedProjects,
+  onNewProject,
+  onRenameProject,
+  onDeleteProject,
+}: ProjectSidebarProps) {
   return (
     <>
       <button
@@ -39,11 +103,16 @@ export function ProjectSidebar({ isOpen, onClose, onNewProject }: ProjectSidebar
             <TabsTrigger value="my-projects">My projects</TabsTrigger>
             <TabsTrigger value="shared">Shared</TabsTrigger>
           </TabsList>
-          <TabsContent className="flex items-center justify-center" value="my-projects">
-            <p className="text-sm text-muted-foreground">Your projects will appear here.</p>
+          <TabsContent className="min-h-0 overflow-y-auto" value="my-projects">
+            <ProjectList
+              emptyMessage="Your projects will appear here."
+              onDeleteProject={onDeleteProject}
+              onRenameProject={onRenameProject}
+              projects={projects}
+            />
           </TabsContent>
-          <TabsContent className="flex items-center justify-center" value="shared">
-            <p className="text-sm text-muted-foreground">Projects shared with you will appear here.</p>
+          <TabsContent className="min-h-0 overflow-y-auto" value="shared">
+            <ProjectList emptyMessage="Projects shared with you will appear here." projects={sharedProjects} />
           </TabsContent>
         </Tabs>
 

@@ -9,10 +9,16 @@ change.
 
 ## Current Goal
 
-- Implement the Clerk authentication flow from `context/feature-specs/03-auth.md`: themed auth pages, protected routes, root redirects, and editor user menu.
+- Implement the `/editor` home and project dialogs from `context/feature-specs/04-project-dialog.md` using mock data only.
 
 ## Completed
 
+- Added the minimal editor home heading, description, and New project action without a card wrapper.
+- Added `useProjectDialogs` to manage dialog selection, project-name form state, mock loading, and in-memory mock owned/shared projects.
+- Wired create actions from the editor home and sidebar, plus owned-project rename/delete actions; shared projects have no actions.
+- Added project name entry, live slug preview, rename prefill/autofocus/Enter submit, and destructive delete confirmation.
+- Kept the sidebar scrim/outside-close behavior for mobile.
+- Verified with `npx tsc --noEmit` and `npm run lint`.
 - Wrapped the root app body in `ClerkProvider` using Clerk's dark theme and the app's CSS color tokens.
 - Kept Clerk's provider and theme in `components/auth/clerk-app-provider.tsx`, an explicit client boundary shared by auth components.
 - Added minimal responsive two-panel sign-in and sign-up pages with text-only product details and Clerk's hosted forms.

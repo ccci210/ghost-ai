@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { FileText, Share2, Sparkles } from "lucide-react";
+import Link from "next/link";
 
 type AuthPageLayoutProps = {
   children: ReactNode;
@@ -31,10 +32,10 @@ export function AuthPageLayout({ children, mode }: AuthPageLayoutProps) {
     <main className="grid min-h-dvh bg-background text-foreground lg:grid-cols-2">
       <section className="flex min-h-[55dvh] flex-col px-6 py-8 sm:px-10 sm:py-10 lg:min-h-dvh lg:px-14 lg:py-12 xl:px-16">
         <div className="mx-auto flex w-full max-w-xl flex-1 flex-col">
-          <a className="inline-flex items-center gap-3 text-base font-semibold tracking-tight" href="/">
+          <Link className="inline-flex items-center gap-3 text-base font-semibold tracking-tight" href="/">
             <span aria-hidden="true" className="size-9 rounded-lg bg-auth-accent shadow-sm" />
             Ghost AI
-          </a>
+          </Link>
 
           <div className="my-auto py-12 lg:py-20">
             <h1 className="max-w-xl text-4xl font-semibold leading-[1.15] tracking-tight sm:text-5xl">
