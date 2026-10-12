@@ -9,9 +9,14 @@ change.
 
 ## Current Goal
 
-- Wire the editor sidebar and project dialogs to the project APIs as specified in `context/feature-specs/07-wire-editor-home.md`.
+- Build the server-checked `/editor/[roomId]` workspace shell specified in `context/feature-specs/08-editor-workspace-shell.md`.
 
 ## Completed
+
+- Added Clerk identity and project access helpers for owner and collaborator checks; `/editor/[roomId]` redirects signed-out users and displays `AccessDenied` for missing or inaccessible projects.
+- Added the full-viewport project workspace shell with the project name, docked sidebar with the current project highlighted, centered canvas placeholder, and toggleable AI sidebar placeholder.
+- Mounted the project dialogs and existing project actions in the workspace sidebar so project management remains available from the workspace.
+- Verified the workspace route and TypeScript with a successful Webpack production build under Node 22.
 
 - Added server-side project data loading for owned and email-shared projects and passed both lists into the editor sidebar without client-side initial fetching.
 - Replaced mock dialog state with `useProjectActions` API mutations for create, rename, and delete, including rename refresh and active-workspace delete redirect behavior.
@@ -58,7 +63,7 @@ change.
 
 ## Next Up
 
-- No next feature unit specified.
+- No next feature specified.
 
 ## Open Questions
 
@@ -67,6 +72,7 @@ change.
 
 ## Architecture Decisions
 
+- Keep `/editor/[roomId]` as a server checked route; the right AI panel and Share control remain placeholders without chat or sharing behavior.
 - Use the slug plus random suffix as the project ID and future Liveblocks room ID for editor-created projects; keep Prisma's existing CUID default for API clients that omit an ID.
 - Use the shadcn/ui Base UI preset with Tailwind CSS v4; this is the generated configuration for the installed component set.
 - Apply a dark-only neutral palette by default because the feature requires no light styling and no existing palette values were present in `globals.css`.

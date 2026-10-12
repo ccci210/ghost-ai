@@ -7,10 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { ProjectItem } from "@/lib/project-data"
 
 type ProjectSidebarProps = {
+  variant?: "overlay" | "docked"
   isOpen: boolean
   onClose: () => void
   projects: ProjectItem[]
   sharedProjects: ProjectItem[]
+  activeProjectId?: string
   onNewProject: () => void
   onOpenProject: (project: ProjectItem) => void
   onRenameProject: (project: ProjectItem) => void
@@ -23,9 +25,11 @@ function ProjectList({
   onOpenProject,
   onRenameProject,
   onDeleteProject,
+  activeProjectId,
 }: {
   projects: ProjectItem[]
   emptyMessage: string
+  activeProjectId?: string
   onOpenProject: (project: ProjectItem) => void
   onRenameProject?: (project: ProjectItem) => void
   onDeleteProject?: (project: ProjectItem) => void
@@ -37,8 +41,12 @@ function ProjectList({
   return (
     <ul className="space-y-1">
       {projects.map((project) => (
-        <li className="group flex items-center gap-2 rounded-md px-2 py-2 hover:bg-sidebar-accent" key={project.id}>
+        <li
+          className={`group flex items-center gap-2 rounded-md px-2 py-2 ${activeProjectId === project.id ? "bg-sidebar-accent text-sidebar-accent-foreground" : "hover:bg-sidebar-accent"}`}
+          key={project.id}
+        >
           <button
+            aria-current={activeProjectId === project.id ? "page" : undefined}
             className="min-w-0 flex-1 text-left"
             onClick={() => onOpenProject(project)}
             type="button"
@@ -75,6 +83,7 @@ function ProjectList({
 }
 
 export function ProjectSidebar({
+  variant = "overlay",
   isOpen,
   onClose,
   projects,
@@ -83,27 +92,38 @@ export function ProjectSidebar({
   onOpenProject,
   onRenameProject,
   onDeleteProject,
+  activeProjectId,
 }: ProjectSidebarProps) {
+  const isDocked = variant === "docked"
+
   return (
     <>
-      <button
-        aria-label="Close projects sidebar"
-        className={`fixed inset-0 z-40 bg-black/30 transition-opacity duration-200 ${isOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
-        onClick={onClose}
-        tabIndex={isOpen ? 0 : -1}
-        type="button"
-      />
+      {!isDocked ? (
+        <button
+          aria-label="Close projects sidebar"
+          className={`fixed inset-0 z-40 bg-black/30 transition-opacity duration-200 ${isOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
+          onClick={onClose}
+          tabIndex={isOpen ? 0 : -1}
+          type="button"
+        />
+      ) : null}
       <aside
         aria-label="Projects"
-        aria-hidden={!isOpen}
-        className={`fixed inset-y-0 left-0 z-50 flex w-[min(20rem,calc(100vw-2rem))] flex-col border-r border-border bg-sidebar text-sidebar-foreground shadow-xl transition-transform duration-200 ease-out ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
-        inert={!isOpen}
+        aria-hidden={isDocked ? undefined : !isOpen}
+        className={
+          isDocked
+            ? "relative z-0 flex h-full w-56 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:w-64"
+            : `fixed inset-y-0 left-0 z-50 flex w-[min(20rem,calc(100vw-2rem))] flex-col border-r border-border bg-sidebar text-sidebar-foreground shadow-xl transition-transform duration-200 ease-out ${isOpen ? "translate-x-0" : "-translate-x-full"}`
+        }
+        inert={!isDocked && !isOpen}
       >
         <div className="flex h-14 items-center justify-between border-b border-sidebar-border px-4">
           <h2 className="text-sm font-semibold">Projects</h2>
-          <Button aria-label="Close projects sidebar" onClick={onClose} size="icon" variant="ghost">
-            <X />
-          </Button>
+          {!isDocked ? (
+            <Button aria-label="Close projects sidebar" onClick={onClose} size="icon" variant="ghost">
+              <X />
+            </Button>
+          ) : null}
         </div>
 
         <Tabs className="flex min-h-0 flex-1 flex-col gap-4 p-4" defaultValue="my-projects">
@@ -114,6 +134,7 @@ export function ProjectSidebar({
           <TabsContent className="min-h-0 overflow-y-auto" value="my-projects">
             <ProjectList
               emptyMessage="Your projects will appear here."
+              activeProjectId={activeProjectId}
               onOpenProject={onOpenProject}
               onDeleteProject={onDeleteProject}
               onRenameProject={onRenameProject}
@@ -123,6 +144,7 @@ export function ProjectSidebar({
           <TabsContent className="min-h-0 overflow-y-auto" value="shared">
             <ProjectList
               emptyMessage="Projects shared with you will appear here."
+              activeProjectId={activeProjectId}
               onOpenProject={onOpenProject}
               projects={sharedProjects}
             />
