@@ -7,6 +7,7 @@ import { Bot, PanelRightClose, PanelRightOpen, Share2 } from "lucide-react";
 
 import { ProjectDialogManager } from "@/components/editor/project-dialog-manager";
 import { ProjectSidebar } from "@/components/editor/project-sidebar";
+import { ShareDialog } from "@/components/editor/share-dialog";
 import { Button } from "@/components/ui/button";
 import { useProjectActions } from "@/hooks/use-project-actions";
 import type { ProjectItem } from "@/lib/project-data";
@@ -30,6 +31,7 @@ export function WorkspaceLayout({
 }: WorkspaceLayoutProps) {
   const router = useRouter();
   const [isAiSidebarOpen, setIsAiSidebarOpen] = useState(true);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const projectActions = useProjectActions(ownedProjects, sharedProjects);
 
   return (
@@ -41,10 +43,9 @@ export function WorkspaceLayout({
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <Button
-            aria-label="Sharing will be available later"
-            disabled
+            aria-label="Share project"
+            onClick={() => setIsShareDialogOpen(true)}
             size="sm"
-            title="Sharing will be available later"
             variant="outline"
           >
             <Share2 />
@@ -104,6 +105,13 @@ export function WorkspaceLayout({
       </div>
 
       <ProjectDialogManager controller={projectActions} />
+      <ShareDialog
+        isOwner={project.isOwned}
+        onOpenChange={setIsShareDialogOpen}
+        open={isShareDialogOpen}
+        projectId={project.id}
+        projectName={project.name}
+      />
     </div>
   );
 }

@@ -9,9 +9,14 @@ change.
 
 ## Current Goal
 
-- Build the server-checked `/editor/[roomId]` workspace shell specified in `context/feature-specs/08-editor-workspace-shell.md`.
+- Implement the project sharing dialog specified in `context/feature-specs/09-shared-dialog.md`.
 
 ## Completed
+
+- Added `GET`, `POST`, and `DELETE /api/projects/[projectId]/collaborators`; listing requires project access, while invite/removal endpoints enforce ownership server-side.
+- Enriched collaborator entries with Clerk display names and avatar URLs when an account matches the email; unmatched emails remain visible as email-only entries.
+- Added the Share dialog to the workspace navbar with collaborator listing, owner-only invite/remove actions, read-only collaborator view, and temporary `Copied!` feedback for the project link.
+- Verified the feature with a successful Webpack production build under Node 22, including TypeScript.
 
 - Added Clerk identity and project access helpers for owner and collaborator checks; `/editor/[roomId]` redirects signed-out users and displays `AccessDenied` for missing or inaccessible projects.
 - Added the full-viewport project workspace shell with the project name, docked sidebar with the current project highlighted, centered canvas placeholder, and toggleable AI sidebar placeholder.
@@ -72,7 +77,8 @@ change.
 
 ## Architecture Decisions
 
-- Keep `/editor/[roomId]` as a server checked route; the right AI panel and Share control remain placeholders without chat or sharing behavior.
+- Store collaborator access by normalized email in `ProjectCollaborator`; resolve Clerk profile details at read time without adding a local user table.
+- Keep `/editor/[roomId]` as a server checked route; the AI panel remains a placeholder without chat behavior.
 - Use the slug plus random suffix as the project ID and future Liveblocks room ID for editor-created projects; keep Prisma's existing CUID default for API clients that omit an ID.
 - Use the shadcn/ui Base UI preset with Tailwind CSS v4; this is the generated configuration for the installed component set.
 - Apply a dark-only neutral palette by default because the feature requires no light styling and no existing palette values were present in `globals.css`.
