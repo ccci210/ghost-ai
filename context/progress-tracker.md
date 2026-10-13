@@ -9,9 +9,21 @@ change.
 
 ## Current Goal
 
-- Implement the project sharing dialog specified in `context/feature-specs/09-shared-dialog.md`.
+- Implement the collaborative React Flow canvas from `context/feature-specs/11-base-canvas.md`.
 
 ## Completed
+
+- Replaced the workspace canvas placeholder with an empty React Flow canvas synced through suspense-enabled `useLiveblocksFlow`, including node/edge change, connect, and delete handlers.
+- Added a client canvas wrapper with `LiveblocksProvider`, project `RoomProvider`, initial cursor/thinking presence, loading state, and connection/error fallbacks; the workspace page remains server-side.
+- Added shared `CanvasNodeData`, `CanvasNode` (`canvasNode`), and `CanvasEdge` (`canvasEdge`) types in `types/canvas.ts`.
+- Added loose connections, `fitView`, a MiniMap, and a dark dot-pattern background.
+- Verified with a successful Webpack production build under Node 22, TypeScript, targeted lint, and a server-render check that shows the loading fallback without invoking the browser canvas.
+
+- Defined nullable cursor position, `isThinking`, and Clerk user ID/name/avatar/color metadata in `liveblocks.config.ts`.
+- Added a lazy, cached Liveblocks Node client and a deterministic user cursor color helper with a fixed palette.
+- Added `POST /api/liveblocks-auth` with Clerk authentication, existing project owner/collaborator access checks, private room creation only when missing, and room-specific session tokens carrying user metadata.
+- Installed the missing `@liveblocks/node` server SDK and documented `LIVEBLOCKS_SECRET_KEY` setup in the README.
+- Verified with a successful Webpack production build under Node 22, TypeScript, targeted lint, and mocked auth checks for signed-out, malformed, missing, denied, owner, and collaborator requests.
 
 - Added `GET`, `POST`, and `DELETE /api/projects/[projectId]/collaborators`; listing requires project access, while invite/removal endpoints enforce ownership server-side.
 - Enriched collaborator entries with Clerk display names and avatar URLs when an account matches the email; unmatched emails remain visible as email-only entries.
@@ -68,15 +80,18 @@ change.
 
 ## Next Up
 
-- No next feature specified.
+- Configure `LIVEBLOCKS_SECRET_KEY` in `.env.local`, restart the server, and verify authenticated room connections and canvas synchronization with two clients.
 
 ## Open Questions
 
+- `LIVEBLOCKS_SECRET_KEY` is absent from the local environment files, so live room/token and multiplayer canvas verification remain pending; the auth branches were checked with mocks and canvas server rendering was checked locally.
 - The spec repeats the navbar path for the Project Sidebar. Implemented it as `components/editor/project-sidebar.tsx` to keep the components separate.
 - Clerk production credentials are not configured; this feature currently uses the connected development instance.
 
 ## Architecture Decisions
 
+- Let `@liveblocks/react-flow` manage synced canvas state; keep room connection and error handling inside the client canvas wrapper and project authorization in the server page.
+- Use project-scoped Liveblocks access tokens after checking Prisma project access; rooms are private by default, and the cached server client is initialized lazily without caching session tokens.
 - Store collaborator access by normalized email in `ProjectCollaborator`; resolve Clerk profile details at read time without adding a local user table.
 - Keep `/editor/[roomId]` as a server checked route; the AI panel remains a placeholder without chat behavior.
 - Use the slug plus random suffix as the project ID and future Liveblocks room ID for editor-created projects; keep Prisma's existing CUID default for API clients that omit an ID.

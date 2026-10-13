@@ -2,6 +2,12 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+For Liveblocks authentication, set `LIVEBLOCKS_SECRET_KEY` in `.env.local` to
+your project's secret key from the Liveblocks dashboard, then restart the dev
+server. This key is used only on the server. `POST /api/liveblocks-auth` accepts
+`{ "room": "<project-id>" }` and grants room access after checking the Clerk user
+against the project's owner and collaborators.
+
 First, run the development server:
 
 ```bash

@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
-import { Bot, PanelRightClose, PanelRightOpen, Share2 } from "lucide-react";
+import { PanelRightClose, PanelRightOpen, Share2 } from "lucide-react";
 
+import { EditorCanvas } from "@/components/editor/editor-canvas";
 import { ProjectDialogManager } from "@/components/editor/project-dialog-manager";
 import { ProjectSidebar } from "@/components/editor/project-sidebar";
 import { ShareDialog } from "@/components/editor/share-dialog";
@@ -79,16 +80,8 @@ export function WorkspaceLayout({
           variant="docked"
         />
 
-        <main className="relative grid min-w-0 flex-1 place-items-center overflow-hidden bg-[#090b0f]">
-          <div className="max-w-sm px-6 text-center">
-            <div className="mx-auto grid size-12 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-muted-foreground">
-              <Bot aria-hidden="true" className="size-5" />
-            </div>
-            <h2 className="mt-4 text-base font-medium">Your canvas is ready</h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Architecture nodes and connections will appear here.
-            </p>
-          </div>
+        <main aria-label="Project canvas" className="relative min-w-0 flex-1 overflow-hidden bg-[#090b0f]">
+          <EditorCanvas roomId={project.id} />
         </main>
 
         {isAiSidebarOpen ? (
